@@ -5,8 +5,8 @@
     <!-- 子路由出口 -->
     <!-- 标签栏导航 -->
     <!-- route 开启路由模式 -->
-<van-tabbar class="layout-tabbar" v-model="active" route>
-  <van-tabbar-item to="/">
+<van-tabbar class="layout-tabbar" route>
+  <van-tabbar-item to="/home">
     <template #icon>
       <div class="toutiao toutiao-shouye"></div>
     </template>
@@ -31,7 +31,7 @@
     <template #icon>
       <div class="toutiao toutiao-wode"></div>
     </template>
-    <span class="text">我的</span>
+    <span class="text">{{$store.state.user ?'我的':'未登录' }}</span>
   </van-tabbar-item>
 </van-tabbar>
     <!-- /标签栏导航 -->
@@ -50,8 +50,9 @@ export default {
   },
   computed: {},
   watch: {},
-  created () {},
-  mounted () {},
+  activate () {
+    this.$router.push('/home')
+  },
   methods: {}
 }
 </script>

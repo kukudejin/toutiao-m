@@ -11,11 +11,12 @@ const routes = [
   },
   {
     path: '/',
-    name: 'layout',
+    // name: 'layout',
     component: () => import('@/views/layout'),
     children: [
+
       {
-        path: '', // 默认子路由
+        path: '/home', // 默认子路由 貌似可能 有Bug?
         name: 'home',
         component: () => import('@/views/home')
       },

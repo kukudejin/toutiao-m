@@ -1,7 +1,12 @@
 <template>
   <div class="login-continer">
     <!-- 当前页面导航栏 -->
-  <van-nav-bar title="登录" class="page-nav-bar"/>
+  <van-nav-bar title="登录" class="page-nav-bar">
+  <van-icon
+  slot="left"
+  name="cross"
+  @click="$router.back()"/>
+  </van-nav-bar>
   <!-- /当前页面导航栏 -->
   <!-- 表单-->
   <!--
@@ -108,6 +113,10 @@ export default {
         const { data } = await login(user)
         this.$store.commit('setUser', data.data)
         Toast.success('登录成功')
+
+        // 登录成功跳转回原来页面
+        // back的方式不严谨 后面将功能优化再说
+        this.$router.back()
       } catch (err) {
         if (err.response.status === 400) {
           console.log('手机号或验证码错误')
