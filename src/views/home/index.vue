@@ -31,26 +31,46 @@
         <!-- 插槽内容 -->
         <div slot="nav-right" class="placeholder"></div>
         <!-- 右插槽 汉堡按钮 -->
-        <div slot="nav-right" class="hamburger-btn">
+        <div slot="nav-right" class="hamburger-btn"
+        @click="(isCancelEditShow=true)">
           <i class="toutiao toutiao-gengduo"></i>
         </div>
       </van-tabs>
       <!-- 频道列表 -->
+
+      <!-- 频道编辑弹出层 -->
+      <van-popup
+        v-model="isCancelEditShow"
+        closeable
+        close-icon-position="top-left"
+        position="bottom"
+        :style="{ height: '100%' }"
+      >
+      <channel-edit
+      :active="active"
+      :my-channels="channels"
+      @update-active="onUpdateActive"
+      />
+      </van-popup>
+      <!-- /频道编辑弹出层 -->
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list.vue'
+import ChannelEdit from './components/channel-edit.vue'
 export default {
   name: 'HomeIndex',
-  components: { ArticleList },
+  components: { ArticleList, ChannelEdit },
   props: {},
   data () {
     return {
+      // 激活频道的索引
       active: 0,
       // 频道列表
-      channels: []
+      channels: [],
+      isCancelEditShow: false // 控制编辑频道弹框的展示与否
     }
   },
   computed: {},
@@ -67,6 +87,11 @@ export default {
       } catch (err) {
         this.$toast('获取频道列表失败')
       }
+    },
+    // 父子联动 更新激活选项
+    onUpdateActive (index, isCancelEditShow = true) {
+      this.active = index
+      this.isCancelEditShow = false
     }
   }
 }
