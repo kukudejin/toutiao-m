@@ -46,7 +46,11 @@
   </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import { getAllChannels, deleteUserChannel, addUserChannel } from '@/api/channel'
+// 查看是否登录调用本地存储
+import { mapState } from 'vuex'
+// 存储数据到本地调用封装好的storage模块
+import { setItem } from '@/utils/storage'
 export default {
   name: 'ChannelEdit', // 最好用你这个组件的名字来命名
   components: {},
@@ -69,6 +73,7 @@ export default {
   },
   // 计算属性
   computed: {
+    ...mapState(['user']),
     // 数组的filter方法：遍历数组把符合条件的元素储存到新数组中并返回
     recommendChannels () {
       return this.allChannels.filter(channel => {
@@ -110,28 +115,61 @@ export default {
         this.$toast('数据获取失败')
       }
     },
-    onAddChannel (channel) {
+    async onAddChannel (channel) {
       // eslint-disable-next-line vue/no-mutating-props
       this.myChannels.push(channel)
+
+      // 数据持久化的处理
+      if (this.user) {
+        try {
+          // 已登录把数据请求接口放到线上
+          await addUserChannel({
+            id: channel.id, // 频道id
+            seq: this.myChannels.length// 序号 前面Push完的数组长度刚好就是此时的序号位次
+          })
+        } catch (err) {
+          this.$toast('保存失败 请稍后重试')
+        }
+      } else {
+        // 未登录把数据储存到本地
+        setItem('TOUTIAO_CHANNELS', this.myChannels)
+      }
     },
     onMyChannelClick (channel, index) {
       // 1. 如果是编辑状态 执行删除操作
       if (this.isEdit) {
         // 对删除的index进行判断查看是否为固定频道
-        if (this.flexChannels.includes(index)) {
+        if (this.flexChannels.includes(channel.id)) {
           return
         }
         // 2. 编辑状态删除频道
+        // eslint-disable-next-line vue/no-mutating-props
+        this.myChannels.splice(index, 1)
         if (index <= this.active) {
+          // 3.执行删除频道 如果要删除的是激活频道前的频道  则更新激活频道减一
           // 让激活频道的索引 -1
           this.$emit('update-active', this.active - 1, true)
         }
-        // eslint-disable-next-line vue/no-mutating-props
-        this.myChannels.splice(index, 1)
+
+        // 4.处理持久化 避免代码成堆单独封装方法
+        this.deleteChannel(channel)
       } else {
         // 非编辑状态选择频道
         // 子组件不能改变props 的数据
         this.$emit('update-active', index, false)
+      }
+    },
+    async deleteChannel (channel) {
+      if (this.user) {
+        // 已登录，则将数据更新到线上
+        try {
+          await deleteUserChannel(channel.id)
+        } catch (err) {
+          this.$toast('删除频道失败')
+        }
+      } else {
+        // 未登录 将数据储存到本地
+        setItem('TOUTIAO_CHANNELS', this.myChannels)
       }
     }
   }
