@@ -6,7 +6,10 @@ module.exports = {
         // 如果是我们自己的样式就按照 75 处理转换
         return file.indexOf('vant') !== -1 ? 37.5 : 75
       },
-      propList: ['*']
+      propList: ['*'],
+
+      // 排除不要转换的样式资源
+      exclude: 'github-markdown'
     }
   }
 }

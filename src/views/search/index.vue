@@ -43,7 +43,6 @@
 import SearchHistory from './components/search-history.vue'
 import SearchSuggestion from './components/search-suggestion.vue'
 import SearchResult from './components/search-result.vue'
-import { Toast } from 'vant'
 export default {
   name: 'SearchIndex', // 最好用你这个组件的名字来命名
   components: { SearchHistory, SearchSuggestion, SearchResult },
@@ -64,7 +63,7 @@ export default {
       this.isResultShow = true
     },
     onCancel () {
-      Toast('取消')
+      this.$router.back()
     }
   }
 }
