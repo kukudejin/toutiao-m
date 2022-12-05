@@ -88,7 +88,12 @@
           ref="article-content"
           ></div>
           <van-divider>正文结束</van-divider>
-
+          <!-- 文章评论列表 -->
+          <CommentList
+           :source="article.art_id"
+           @onload-success="(totalCommentCount = $event.total_count)"
+          />
+          <!-- 文章评论列表 -->
                 <!-- 底部区域 -->
       <div class="article-bottom">
         <van-button
@@ -99,7 +104,7 @@
         >写评论</van-button>
         <van-icon
           name="comment-o"
-          badge="123"
+          :badge="totalCommentCount"
           color="#777"
         />
         <CollectArticle
@@ -152,6 +157,8 @@ import { ImagePreview } from 'vant'
 import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
+import CommentList from './compontents/comment-list.vue'
+
 // ImagePreview([
 //   'https://img01.yzcdn.cn/vant/apple-1.jpg',
 //   'https://img01.yzcdn.cn/vant/apple-2.jpg'
@@ -162,7 +169,8 @@ export default {
   components: {
     FollowUser,
     CollectArticle,
-    LikeArticle
+    LikeArticle,
+    CommentList
   },
   props: {
     articleId: {
@@ -175,7 +183,8 @@ export default {
       article: {}, // 文章详情
       loading: true, // 加载中的loading状态
       errorstatus: 0, // 失败状态码
-      followLoading: false
+      followLoading: false,
+      totalCommentCount: 0
     }
   },
   computed: {},
