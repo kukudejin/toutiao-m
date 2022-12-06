@@ -24,7 +24,11 @@
               <van-button size="mini" type="default">回复{{comment.reply_count}} </van-button>
             </p>
           </div>
-          <van-icon slot="right-icon" name="like-o" >
+          <!-- 点赞图标的加工 -->
+          <van-icon
+          slot="right-icon"
+          :class="{}"
+          :name="comment.is_liking ? 'like': 'like-o'" >
             {{ comment.like_count || ''}}
            </van-icon>
         </van-cell>
@@ -63,16 +67,12 @@ export default {
     onLoad () {
       // 异步更新数据
       setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 1; i++) {
           this.list.push(this.list.length + 1)
         }
         // 加载状态结束
         this.loading = false
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
-        }
+        this.finished = true
       }, 500)
     }
   }
